@@ -1,12 +1,14 @@
-mod data_parse;
+mod sdr;
+
+// const PRELUDE: &str = "111000111000111000111000";
 
 fn main() {
-    let data:Vec<f32> = data_parse::from_file("./assets/data.8")
+    let mut data:Vec<f32> = sdr::from_file("./assets/data.8")
         .into_iter()
-        .filter(|&amp| { amp > 0.6 })
         .collect();
 
-    for i in 0..data.len() {
-        print!("{} ", data[i]);
-    }
+    data = sdr::decimate(&data, 5);
+    data = sdr::convolve(&data, 100);
+
+    let output = sdr::parse_message(&data, 0.6);
 }
